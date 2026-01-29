@@ -1,12 +1,6 @@
-<div align="center">Laravel Article Importer</div>
+div align="center">Laravel Article Importer</div>
 
 <p align="center"><strong>CSV to Polymorphic Database</strong></p>
-
-<div align="center">
-<img src="https://www.google.com/search?q=https://img.shields.io/badge/Laravel-FF2D20%3Fstyle%3Dfor-the-badge%26logo%3Dlaravel%26logoColor%3Dwhite" alt="Laravel">
-<img src="https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white" alt="MariaDB">
-<img src="https://www.google.com/search?q=https://img.shields.io/badge/PHP-777BB4%3Fstyle%3Dfor-the-badge%26logo%3Dphp%26logoColor%3Dwhite" alt="PHP">
-</div>
 
 Proyek ini adalah sistem Artisan Command khusus untuk memproses file article.csv menjadi data terstruktur dalam skema database Laravel. Sistem ini menangani normalisasi data, pembersihan konten, dan hubungan database polimorfik.
 
