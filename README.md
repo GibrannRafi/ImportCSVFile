@@ -1,46 +1,80 @@
-Import Data Artikel (CSV to Polymorphic Database)
-Proyek ini adalah Artisan Command untuk memproses file article.csv menjadi data terstruktur sesuai skema database.
+<div align="center">Laravel Article Importer</div>
 
-🛠️ Proses Pengerjaan
-Migration Manual: Dikarenakan perbedaan versi MariaDB yang menyebabkan kegagalan import SQL dump, saya membangun ulang skema menggunakan Laravel Migrations untuk menjamin kompatibilitas.
+<p align="center"><strong>CSV to Polymorphic Database</strong></p>
 
-Eloquent Modeling: Membuat model dengan relasi Polymorphic pada tabel article_meta untuk menghubungkan articles dengan reporters dan tags.
+<div align="center">
+<img src="https://www.google.com/search?q=https://img.shields.io/badge/Laravel-FF2D20%3Fstyle%3Dfor-the-badge%26logo%3Dlaravel%26logoColor%3Dwhite" alt="Laravel">
+<img src="https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white" alt="MariaDB">
+<img src="https://www.google.com/search?q=https://img.shields.io/badge/PHP-777BB4%3Fstyle%3Dfor-the-badge%26logo%3Dphp%26logoColor%3Dwhite" alt="PHP">
+</div>
 
-Data Processing: Membuat command import:articles yang membaca data per baris, memvalidasi index CSV, dan melakukan pembersihan data secara real-time.
+Proyek ini adalah sistem Artisan Command khusus untuk memproses file article.csv menjadi data terstruktur dalam skema database Laravel. Sistem ini menangani normalisasi data, pembersihan konten, dan hubungan database polimorfik.
+
+🛠️ Proses & Arsitektur
+
+1. Migration Manual
+
+Mengingat adanya perbedaan versi MariaDB yang sering menyebabkan kegagalan pada SQL dump tradisional, proyek ini menggunakan Laravel Migrations. Hal ini menjamin kompatibilitas penuh dan integritas skema terlepas dari versi database yang digunakan.
+
+2. Eloquent Modeling & Polimorfisme
+
+Menggunakan relasi Polymorphic pada tabel article_meta. Tabel ini berfungsi sebagai jembatan fleksibel untuk menghubungkan:
+
+<ul>
+<li><code>articles</code> ↔ <code>reporters</code></li>
+<li><code>articles</code> ↔ <code>tags</code></li>
+</ul>
+
+3. Data Processing Pipeline
+
+Command import:articles bekerja dengan alur berikut:
+
+📑 Stream Reading: Membaca data CSV baris demi baris (memory efficient).
+
+🔍 Validation: Validasi indeks kolom untuk mencegah error undefined offset.
+
+🧹 Sanitization: Pembersihan data secara real-time sebelum proses persistensi.
 
 🐞 Kendala & Solusi Teknis
-Selama proses pengerjaan, saya menyelesaikan beberapa masalah berikut:
 
-Data JSON Inkonsisten: Data author dan editor di CSV tercampur antara string dan JSON.
+Masalah
 
-Solusi: Menggunakan Regex helper untuk mengekstrak data JSON secara akurat tanpa bergantung pada format string kolom.
+Solusi
 
-Integrity Constraint Violation (Error 1451): Kegagalan saat update data karena script mencoba mengubah UUID yang sudah terikat relasi.
+Data JSON Inkonsisten
 
-Solusi: Memisahkan logika create dan update. UUID hanya dibuat saat data pertama kali masuk, sedangkan proses selanjutnya hanya memperbarui isi konten.
+Menggunakan Regex helper untuk mendeteksi dan mengekstrak data JSON secara akurat tanpa bergantung pada format string kolom.
 
-Normalisasi Konten: Konten masih kotor dengan tag <p>, &nbsp;, dan placeholder ``.
+Konten Kotor
 
-Solusi: Implementasi content cleaning menggunakan strip_tags dan html_entity_decode untuk menghasilkan teks murni sesuai instruksi.
+Implementasi content cleaning menggunakan strip_tags() dan html_entity_decode() untuk menghasilkan teks murni sesuai spesifikasi.
 
-✅ Fitur Utama
-Idempotent: Command aman dijalankan berkali-kali tanpa menghasilkan duplikasi data.
+✨ Fitur Utama (Bonus)
 
-Polymorphic Relation: Metadata terisi otomatis pada tabel article_meta.
+✅ Idempotent: Command aman dijalankan berkali-kali tanpa duplikasi data.
 
-Auto-Generated Identifiers:
+🔗 Auto-Generated Metadata: Tabel article_meta terisi otomatis via Eloquent.
 
-article_id: Random 10 karakter unik.
+🆔 Unique Article ID: 10 karakter unik acak untuk setiap artikel.
 
-slug: Otomatis dari title (artikel) atau name (tags/reporter).
+🏷️ Auto-Slug: Slug otomatis menggunakan Str::slug() dari judul atau nama.
 
-status: Default "published".
+🚀 Default State: Status artikel otomatis diset ke published.
 
 💻 Cara Penggunaan
-Jalankan migrasi:
+
+Persiapan Database
+Pastikan konfigurasi .env sudah benar, lalu jalankan migrasi:
 
 php artisan migrate
 
-Jalankan perintah import:
+
+Eksekusi Import
+Letakkan file article.csv di direktori root proyek, lalu jalankan:
 
 php artisan import:articles article.csv
+
+
+<div align="center">
+<sub>Dikembangkan sebagai solusi automasi data artikel yang robust dan scalable.</sub>
+</div>
