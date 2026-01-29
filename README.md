@@ -59,11 +59,13 @@ Sistem melakukan pembersihan konten artikel:
 ## 💻 Cara Penggunaan
 
 1. **Clone Repository**
+   
    ```bash
    git clone [https://github.com/GibrannRafi/ImportCSVFile.git]
    (https://github.com/GibrannRafi/ImportCSVFile.git)
    cd ImportCSVFile
-2. **Setup Environtment** Salin file .env.example menjadi .env dan pastikan konfigurasi database sudah sesuai:
+3. **Setup Environtment** Salin file .env.example menjadi .env dan pastikan konfigurasi database sudah sesuai:
+   
    ```bash
    cp .env.example .env 
    ```
@@ -71,17 +73,19 @@ Sistem melakukan pembersihan konten artikel:
    ```bash
    DB_DATABASE=jp_cms
    ```
-3. **Install Dependencies** 
+4. **Install Dependencies**
+   
     ```bash
     composer install
    php artisan key:generate 
-4. **Persiapan Database** : Buat database baru dengan nama jp_cms di MySQL/MariaDB, lalu jalankan migrasi tabel:
+5. **Persiapan Database** : Buat database baru dengan nama jp_cms di MySQL/MariaDB, lalu jalankan migrasi tabel:
+   
     ```bash
     php artisan migrate ```
-5. **Eksekusi Import** Pastikan file article.csv sudah berada di direktori root proyek, lalu jalankan perintah:
+7. **Eksekusi Import** Pastikan file article.csv sudah berada di direktori root proyek, lalu jalankan perintah:
+   
    ```bash
    php artisan import:articles article.csv
-  ```bash
   
    
   
