@@ -1,74 +1,68 @@
-<div align="center">Laravel Article Importer</div>
+# Laravel Import CSV 
 
-<p align="center"><strong>CSV to Polymorphic Database</strong></p>
+Membuat **Artisan Command** untuk mentransformasi data dari file `article.csv` ke dalam skema database Laravel yang terstruktur.
 
-Proyek ini adalah sistem Artisan Command khusus untuk memproses file article.csv menjadi data terstruktur dalam skema database Laravel. Sistem ini menangani normalisasi data, pembersihan konten, dan hubungan database polimorfik.
+---
 
-🛠️ Proses & Arsitektur
+## 🛠️ Alur Pengembangan (Workflow)
 
-1. Migration Manual
+### 1. Instalasi & Koneksi Database
+Inisialisasi proyek Laravel dan konfigurasi environment pada file `.env` untuk memastikan koneksi database terjalin dengan benar.
 
-Mengingat adanya perbedaan versi MariaDB yang sering menyebabkan kegagalan pada SQL dump tradisional, proyek ini menggunakan Laravel Migrations. Hal ini menjamin kompatibilitas penuh dan integritas skema terlepas dari versi database yang digunakan.
+### 2. Migration Manual (Skema Database)
+Karena adanya perbedaan versi MariaDB, proyek ini sepenuhnya menggunakan **Laravel Migrations** untuk menjamin portabilitas skema tanpa bergantung pada SQL dump.
 
-2. Eloquent Modeling & Polimorfisme
-
-Menggunakan relasi Polymorphic pada tabel article_meta. Tabel ini berfungsi sebagai jembatan fleksibel untuk menghubungkan:
-
-<ul>
-<li><code>articles</code> ↔ <code>reporters</code></li>
-<li><code>articles</code> ↔ <code>tags</code></li>
-</ul>
-
-3. Data Processing Pipeline
-
-Command import:articles bekerja dengan alur berikut:
-
-📑 Stream Reading: Membaca data CSV baris demi baris (memory efficient).
-
-🔍 Validation: Validasi indeks kolom untuk mencegah error undefined offset.
-
-🧹 Sanitization: Pembersihan data secara real-time sebelum proses persistensi.
-
-🐞 Kendala & Solusi Teknis
-
-Masalah
-
-Solusi
-
-Data JSON Inkonsisten
-
-Menggunakan Regex helper untuk mendeteksi dan mengekstrak data JSON secara akurat tanpa bergantung pada format string kolom.
-
-Konten Kotor
-
-Implementasi content cleaning menggunakan strip_tags() dan html_entity_decode() untuk menghasilkan teks murni sesuai spesifikasi.
-
-✨ Fitur Utama (Bonus)
-
-✅ Idempotent: Command aman dijalankan berkali-kali tanpa duplikasi data.
-
-🔗 Auto-Generated Metadata: Tabel article_meta terisi otomatis via Eloquent.
-
-🆔 Unique Article ID: 10 karakter unik acak untuk setiap artikel.
-
-🏷️ Auto-Slug: Slug otomatis menggunakan Str::slug() dari judul atau nama.
-
-🚀 Default State: Status artikel otomatis diset ke published.
-
-💻 Cara Penggunaan
-
-Persiapan Database
-Pastikan konfigurasi .env sudah benar, lalu jalankan migrasi:
-
-php artisan migrate
+### 3. Eloquent Modeling & Relasi
+Pembuatan model untuk setiap tabel sebagai jembatan logika program. Menggunakan relasi **Polymorphic** pada tabel `article_meta` untuk menghubungkan entitas secara dinamis:
+* `articles` ↔ `reporters`
+* `articles` ↔ `sources`
+* `articles` ↔ `tags`
 
 
-Eksekusi Import
-Letakkan file article.csv di direktori root proyek, lalu jalankan:
 
-php artisan import:articles article.csv
+### 4. Custom Artisan Command
+Inti dari sistem ini adalah command `import:articles` dengan pipeline:
+* **CSV Reading:** Membaca file secara efisien.
+* **Index Mapping:** Validasi indeks kolom untuk akurasi data.
+* **Data Saving:** Persistensi data ke database menggunakan Eloquent.
+
+---
+
+## 🐞 Penanganan Masalah & Optimasi
+
+| Fitur / Masalah | Solusi Teknis |
+| :--- | :--- |
+| **JSON Extraction** | Menggunakan *Regex* untuk mengambil data dari format JSON yang tidak konsisten di dalam CSV. |
+| **Auto-Slug** | Jika slug kosong, sistem men-generate slug otomatis dari `title` atau `name`. |
 
 
-<div align="center">
-<sub>Dikembangkan sebagai solusi automasi data artikel yang robust dan scalable.</sub>
-</div>
+---
+
+## ✨  Optional (Bonus)
+
+### 🔗 Polymorphic Metadata
+Tabel `article_meta` terisi otomatis untuk memetakan relasi antara artikel dengan banyak entitas sekaligus (*reporters, sources, tags*) sesuai standar [Laravel Polymorphic Docs](https://laravel.com/docs/12.x/eloquent-relationships#polymorphic-relationships).
+
+### 🔄 Idempotency
+Perintah bersifat **Idempotent**. Sistem melakukan pengecekan data sebelum proses *insert*. Menjalankan ulang perintah yang sama tidak akan menghasilkan duplikasi data di database.
+
+### 🧹  Normalization
+Sistem melakukan pembersihan konten artikel: 
+* **Clean Junk Content:** Menghapus blok teks "Baca Juga" dan tag HTML pengganggu lainnya (seperti `<p><strong>...`) untuk menghasilkan data yang bersih.
+
+### 🆔 Unique Identifiers
+* **Unique Article ID:** Setiap artikel diberikan 10 karakter unik acak.
+* **Default State:** Setiap artikel baru otomatis mendapatkan status `published`.
+
+---
+
+## 💻 Cara Penggunaan
+
+1. **Persiapan:** Jalankan migrasi tabel.
+   ```bash
+   php artisan migrate
+2. **Eksekusi:** Letakkan file article.csv di root folder, lalu jalankan:
+   ```bash
+   php artisan import:articles article.csv
+---   
+  
