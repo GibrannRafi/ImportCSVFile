@@ -58,11 +58,30 @@ Sistem melakukan pembersihan konten artikel:
 
 ## 💻 Cara Penggunaan
 
-1. **Persiapan:** Jalankan migrasi tabel.
+1. **Clone Repository**
    ```bash
-   php artisan migrate
-2. **Eksekusi:** Letakkan file article.csv di root folder, lalu jalankan:
+   git clone [https://github.com/GibrannRafi/ImportCSVFile.git]
+   (https://github.com/GibrannRafi/ImportCSVFile.git)
+   cd ImportCSVFile
+2. **Setup Environtment** Salin file .env.example menjadi .env dan pastikan konfigurasi database sudah sesuai:
+   ```bash
+   cp .env.example .env 
+   ```
+   Lalu buka .env dan pastikan nama database sesuai:
+   ```bash
+   DB_DATABASE=jp_cms
+   ```
+3. **Install Dependencies** 
+    ```bash
+    composer install
+   php artisan key:generate 
+4. **Persiapan Database** : Buat database baru dengan nama jp_cms di MySQL/MariaDB, lalu jalankan migrasi tabel:
+    ```bash
+    php artisan migrate ```
+5. **Eksekusi Import** Pastikan file article.csv sudah berada di direktori root proyek, lalu jalankan perintah:
    ```bash
    php artisan import:articles article.csv
----   
+  ```bash
+  
+   
   
